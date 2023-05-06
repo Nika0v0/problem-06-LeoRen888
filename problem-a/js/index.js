@@ -13,18 +13,19 @@ const COLORS_9 = {
 /* Your code goes here! */
 
 //Create a variable `h1` that refers to the `<h1>` element in the DOM.
-
+const h1 = document.querySelector('h1');
 
 //Change the `textContent` of the `<h1>` element to be "Which Swatch?"
-
+h1.textContent = 'Which Swatch?';
 
 //Somehow the rainbow icon image was included without an alt tag! Set its `alt`
 //attribute to be "A beautiful rainbow".
-
+const rainbow = document.querySelector('img');
+rainbow.alt = 'A beautiful rainbow';
 
 //Give the image the Bootstrap-provided `float-right` CSS class to make it float
 //to the right of the screen
-
+rainbow.classList.add('float-right');
 
 /*Define a function `createColorBox()` that takes in two parameters: a color 
 string (e.g., "blue") and a numeric size (in pixels, e.g., 100). The function 
@@ -38,8 +39,14 @@ should do the following:
 You can test this function by logging out the returned value and checking its
 attributes.
 */
-
-
+function createColorBox(color, size) {
+  const div = document.createElement('div');
+  div.classList.add('d-inline-block');
+  div.style.backgroundColor = color;
+  div.style.width = size + 'px';
+  div.style.height = size + 'px';
+  return div;
+}
 
 /* Define a function `getElementWidth()` that takes in a DOM element (not a 
 string!). This function should return the width in pixels (a number) of that
@@ -50,8 +57,10 @@ element.
    NOTE: The `getBoundingClientRect()` method already exists; do not define a
    new function for it! Just call the method on the DOM element.
 */
-
-
+function getElementWidth(element) {
+  const width = element.getBoundingClientRect().width;
+  return width;
+}
 
 /* Define a function `renderPaletteRow()` that takes in two arguments: array of 
 color strings (like a SINGLE ELEMENT of the `COLORS_9` object), and a "parent" 
@@ -65,40 +74,61 @@ DOM element. The function should do the following:
     DOM element) to determine its width.
   - Append EACH "color box" to the container div you created.
   - Append the container div to the parent element.
-
 You can test the function by calling it and passing it one of the `COLORS_9`
 palettes (e.g., `COLORS_9.Reds`) and a reference to the the <main> element (not the
 selector, but the element itself). Note that the palette will not resize with the
 browser window unless you refresh.
-
 You should NOT include any test calls when running Jest tests!
 */
+function renderPaletteRow(colors, parent, rowHeight = 50) {
+  const container = document.createElement('div');
+  container.style.height = rowHeight + 'px'; // Set the height of the container
 
+  const parentWidth = getElementWidth(parent);
+  const boxWidth = parentWidth / colors.length;
 
+  for (let i = 0; i < colors.length; i++) {
+    const colorBox = createColorBox(colors[i], boxWidth);
+    container.appendChild(colorBox);
+  }
+
+  parent.appendChild(container);
+}
 
 /* Define a function `renderPaletteTable()` that takes no arguments and renders 
 a color palette row for each of the palettes in the `COLORS_9` object into the 
 <main> element. This function should _call_ your `renderPaletteRow()` function 
 as a helper.
-
 Tip: note that `COLORS_9` is an object, not an array! You'll need to use a 
 `for...in` loop or `Object.keys()` to iterate through its keys.
-
 Call your `renderPaletteTable()` method to display all the color palettes!
 */
+function renderPaletteTable() {
+  const main = document.querySelector('main');
+  const palettes = Object.keys(COLORS_9);
+
+  palettes.forEach(paletteRow => {
+    renderPaletteRow(COLORS_9[paletteRow], main);
+  });
+}
 
 
+renderPaletteTable();
 
 //Finally, remove the paragraph in the header that explains how to complete the 
 //problem.
+const removeElement = () => {
+  const remove = document.querySelector('header p');
+  remove.remove();
+};
 
+removeElement();
 
-
-//Make functions and variables available to tester. DO NOT MODIFY THIS.
-if(typeof module !== 'undefined' && module.exports){
+// Make functions and variables available to tester. DO NOT MODIFY THIS.
+if (typeof module !== 'undefined' && module.exports) {
   /* eslint-disable */
-  if(typeof createColorBox !== 'undefined') 
+  if (typeof createColorBox !== 'undefined') 
     module.exports.createColorBox = createColorBox;
-  if(typeof renderPaletteRow !== 'undefined') 
+  if (typeof renderPaletteRow !== 'undefined') 
     module.exports.renderPalette = renderPaletteRow;
 }
